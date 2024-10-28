@@ -1,16 +1,21 @@
 """Convert CSV file to XLSX file."""
 
 import csv
+import re
 import sys
 from pathlib import Path
 from typing import Optional
 
 import xlsxwriter
 from chardet.universaldetector import UniversalDetector
-from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
-from openpyxl.utils.exceptions import IllegalCharacterError
 
+ILLEGAL_CHARACTERS_RE = re.compile(r"[\000-\010]|[\013-\014]|[\016-\037]")
 EXCEL_ROW_LIMIT = 1_048_576
+
+
+class IllegalCharacterError(Exception):
+    """The data submitted which cannot be used directly in Excel files. It
+    must be removed or escaped."""
 
 
 def detect_file_encoding(fpath: Path) -> str | None:
