@@ -19,7 +19,7 @@ def fix_header_duplicate_fields(header):
 
 
 def xlsx2csv(xlsx_file: Path):
-    wb = load_workbook(xlsx_file.as_posix(), read_only=True)
+    wb = load_workbook(xlsx_file.as_posix(), read_only=True, data_only=True)
     for sh_name in wb.sheetnames:
         sh = wb[sh_name]
         csv_file = xlsx_file.parent / f"{xlsx_file.stem}_{sh.title}.csv"
