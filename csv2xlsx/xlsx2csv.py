@@ -28,7 +28,10 @@ def fix_header_duplicate_fields(header):
     return new_header
 
 
-def xlsx2csv(xlsx_file: Path, sheet_names: List[str] | None = None):
+def xlsx2csv(
+    xlsx_file: Path, sheet_names: List[str] | None = None
+) -> List[Path | None]:
+    written_csvs: List[Path] = []
     wb = load_workbook(xlsx_file.as_posix(), read_only=True, data_only=True)
     for sh_name in wb.sheetnames:
         sh = wb[sh_name]
@@ -44,6 +47,8 @@ def xlsx2csv(xlsx_file: Path, sheet_names: List[str] | None = None):
                 else:
                     line = [x.value for x in row]
                     writer.writerow(line)
+        written_csvs.append(csv_file)
+    return written_csvs
 
 
 def main():
