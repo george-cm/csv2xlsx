@@ -1,8 +1,18 @@
+import argparse
 import csv
-import sys
 from pathlib import Path
+from typing import List
 
 from openpyxl import load_workbook
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        prog="xlsx2csv", description="Convert a Excel xlsx file to csv."
+    )
+    parser.add_argument("input_xlsx_files", nargs="+")
+    parser.add_argument("-sn", "--sheetnames", nargs="*")
+    return parser.parse_args()
 
 
 def fix_header_duplicate_fields(header):
@@ -18,10 +28,12 @@ def fix_header_duplicate_fields(header):
     return new_header
 
 
-def xlsx2csv(xlsx_file: Path):
+def xlsx2csv(xlsx_file: Path, sheet_names: List[str] | None = None):
     wb = load_workbook(xlsx_file.as_posix(), read_only=True, data_only=True)
     for sh_name in wb.sheetnames:
         sh = wb[sh_name]
+        if (sheet_names is not None) and (sh.title not in sheet_names):
+            continue
         csv_file = xlsx_file.parent / f"{xlsx_file.stem}_{sh.title}.csv"
         with csv_file.open("w", newline="", encoding="utf-8") as outf:
             writer = csv.writer(outf, dialect="excel")
@@ -35,9 +47,14 @@ def xlsx2csv(xlsx_file: Path):
 
 
 def main():
-    for xlsx_fpath in sys.argv[1:]:
-        xlsx_file = Path(xlsx_fpath)
-        xlsx2csv(xlsx_file)
+    args = parse_arguments()
+    for xlsx in args.input_xlsx_files:
+        xlsx_file = Path(xlsx)
+        if not xlsx_file.exists():
+            print(f"File does not exist: {xlsx_file.as_posix()}")
+        if not xlsx_file.is_file():
+            print(f"This is not a file: {xlsx_file.as_posix()}")
+        xlsx2csv(xlsx_file, args.sheetnames)
 
 
 if __name__ == "__main__":
