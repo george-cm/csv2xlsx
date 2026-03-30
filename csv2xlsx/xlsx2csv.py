@@ -32,7 +32,7 @@ def xlsx2csv(
     xlsx_file: Path, sheet_names: List[str] | None = None
 ) -> List[Path | None]:
     written_csvs: List[Path] = []
-    wb = load_workbook(xlsx_file.as_posix(), read_only=True, data_only=True)
+    wb = load_workbook(xlsx_file.as_posix(), data_only=True)
     for sh_name in wb.sheetnames:
         sh = wb[sh_name]
         if (sheet_names is not None) and (sh.title not in sheet_names):
@@ -42,7 +42,7 @@ def xlsx2csv(
             writer = csv.writer(outf, dialect="excel")
             for i, row in enumerate(sh.rows):
                 if i == 0:
-                    header = [x.value for x in next(sh.rows)]
+                    header = [x.value for x in row]
                     writer.writerow(fix_header_duplicate_fields(header))
                 else:
                     line = [x.value for x in row]
@@ -56,9 +56,9 @@ def main():
     for xlsx in args.input_xlsx_files:
         xlsx_file = Path(xlsx)
         if not xlsx_file.exists():
-            print(f"File does not exist: {xlsx_file.as_posix()}")
-        if not xlsx_file.is_file():
-            print(f"This is not a file: {xlsx_file.as_posix()}")
+            raise SystemExit(f"File does not exist: {xlsx_file.as_posix()}")
+        elif not xlsx_file.is_file():
+            raise SystemExit(f"This is not a file: {xlsx_file.as_posix()}")
         xlsx2csv(xlsx_file, args.sheetnames)
 
 

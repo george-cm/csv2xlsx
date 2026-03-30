@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional
 
 import xlsxwriter
-from chardet.universaldetector import UniversalDetector
+from chardet import UniversalDetector
 
 ILLEGAL_CHARACTERS_RE = re.compile(r"[\000-\010]|[\013-\014]|[\016-\037]")
 EXCEL_ROW_LIMIT = 1_048_576
