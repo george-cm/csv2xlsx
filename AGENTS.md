@@ -1,12 +1,11 @@
 # Project Guidelines
 
+> **Global rules** apply from `C:\Users\George.Murga\.agents\AGENTS.md`.
+> Rules below are project-specific and extend or override the global rules.
+
 ## Workflow
 
 - **TDD always.** Write failing tests before changing any code. Fix the code to make the tests pass.
-
-## Git
-
-- Do NOT include `Co-Authored-By`, `Generated with Devin`, or any Devin-related metadata in commit messages.
 
 ## Commands
 
